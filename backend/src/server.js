@@ -13,20 +13,13 @@ const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
 // middleware
-if (process.env.NODE_ENV !== "production") {
-  app.use(
-    cors({
-      origin: "http://localhost:5173",
-    })
-  );
-}
-app.use(express.json()); // this middleware will parse JSON bodies: req.body
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+  })
+);
 
-// our simple custom middleware
-// app.use((req, res, next) => {
-//   console.log(`Req method is ${req.method} & Req URL is ${req.url}`);
-//   next();
-// });
+app.use(express.json()); // this middleware will parse JSON bodies: req.body
 
 app.use("/api/notes", notesRoutes);
 
