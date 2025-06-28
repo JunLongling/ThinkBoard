@@ -14,12 +14,16 @@ const __dirname = path.resolve();
 
 // middleware
 const corsConfig = {
-    origin: '',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE']
-}
-app.use(cors(corsConfig))
-app.options("", cors(corsConfig))
+  origin: process.env.FRONTEND_URL, 
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+};
+
+app.use(cors(corsConfig));
+
+// Handle preflight requests
+app.options("*", cors(corsConfig));
+
 
 app.use(express.json()); // JSON body parser
 
