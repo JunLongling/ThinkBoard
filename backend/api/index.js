@@ -3,8 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 
-import notesRoutes from "./routes/notesRoutes.js";
-import { connectDB } from "./config/db.js";
+import notesRoutes from "../src/routes/notesRoutes.js";
+import { connectDB } from "../src/config/db.js";
 
 dotenv.config();
 
@@ -37,4 +37,4 @@ connectDB().then(() => {
   });
 });
 
-module.exports = app;
+export default app;
