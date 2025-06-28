@@ -13,11 +13,13 @@ const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
 // middleware
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL, 
-  })
-);
+const corsConfig = {
+    origin: '',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+}
+app.use(cors(corsConfig))
+app.options("", cors(corsConfig))
 
 app.use(express.json()); // JSON body parser
 
