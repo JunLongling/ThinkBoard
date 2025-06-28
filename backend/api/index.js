@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
+import { fileURLToPath } from "url";
 
 import notesRoutes from "../src/routes/notesRoutes.js";
 import { connectDB } from "../src/config/db.js";
@@ -10,26 +11,29 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
-const __dirname = path.resolve();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // middleware
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL, 
   })
 );
 
-app.use(express.json()); // this middleware will parse JSON bodies: req.body
+app.use(express.json()); // JSON body parser
 
+// API routes only
 app.use("/api/notes", notesRoutes);
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-  });
-}
+// ❌ Remove frontend serving logic — you're deploying frontend separately
+// if (process.env.NODE_ENV === "production") {
+//   app.use(express.static(path.join(__dirname, "../frontend/dist")));
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+//   });
+// }
 
 connectDB().then(() => {
   app.listen(PORT, () => {
