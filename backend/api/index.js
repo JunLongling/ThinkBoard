@@ -35,6 +35,10 @@ app.use("/api/notes", notesRoutes);
 //   });
 // }
 
+app.get("/", (req, res) => {
+  res.send("ThinkBoard Backend is running.");
+});
+
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log("Server started on PORT:", PORT);
