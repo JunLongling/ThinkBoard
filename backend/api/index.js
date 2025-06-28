@@ -12,8 +12,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 // middleware
 app.use(
@@ -35,9 +35,6 @@ app.use("/api/notes", notesRoutes);
 //   });
 // }
 
-app.get("/", (req, res) => {
-  res.send("ThinkBoard Backend is running.");
-});
 
 connectDB().then(() => {
   app.listen(PORT, () => {
