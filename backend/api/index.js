@@ -14,7 +14,7 @@ const __dirname = path.resolve();
 
 // middleware
 const corsConfig = {
-  origin: process.env.FRONTEND_URL, 
+  origin: "*", 
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
 };
@@ -22,7 +22,7 @@ const corsConfig = {
 app.use(cors(corsConfig));
 
 // Handle preflight requests
-app.options("*", cors(corsConfig));
+app.options("", cors(corsConfig));
 
 
 app.use(express.json()); // JSON body parser
