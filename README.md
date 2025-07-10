@@ -6,6 +6,3 @@
 
 ## Live Demo
 https://thinkboard-9u5a.onrender.com/
-
-## Acknowledgements
-This project is based on a tutorial by [Codesistency](https://www.youtube.com/watch?v=Ea9rrRj9e0Y).
