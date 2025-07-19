@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
-// 1st step: You need to create a schema
-// 2nd step: You would create a model based off of that schema
+// 1st step: Create a schema
+// 2nd step: Create a model based on that schema
 
 const noteSchema = new mongoose.Schema(
   {
