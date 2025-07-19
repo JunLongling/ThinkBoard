@@ -12,7 +12,10 @@ app.use(cors());
 app.use(express.json()); // JSON body parser
 
 // API routes only
+app.get("/", (req, res) => res.send("Hello from server"));
+
 app.use("/api/notes", notesRoutes);
+
 
 const startServer = async () => {
   try {
