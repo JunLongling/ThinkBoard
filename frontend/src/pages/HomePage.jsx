@@ -13,7 +13,7 @@ const HomePage = () => {
     const fetchNotes = async () => {
       try {
         const res = await api.get("/notes");
-        console.log(res.data);
+         console.log("API response data:", res.data);  
         setNotes(res.data);
       } catch (error) {
         console.log("Error fetching notes");
