@@ -8,7 +8,14 @@ import { connectDB } from "./config/db.js";
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: ENV.FRONTEND_URL,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // handle preflight
 app.use(express.json()); // JSON body parser
 
 // API routes only
