@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 
 import notesRoutes from "./routes/notesRoutes.js";
+import pusherRoutes from "./routes/pusherRoutes.js";
+import boardRoutes from "./routes/boardRoutes.js"; 
 
 import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
@@ -14,16 +16,16 @@ app.use(express.json());
 app.get("/", (req, res) => res.send("Hello from server"));
 
 app.use("/api/notes", notesRoutes);
+app.use("/api/boards", boardRoutes);
+app.use("/pusher", pusherRoutes);
 
 const startServer = async () => {
   try {
     await connectDB();
 
-    if (ENV.NODE_ENV !== "production") {
-      app.listen(ENV.PORT, () => {
-        console.log("Server is running on PORT:", ENV.PORT);
-      });
-    }
+    app.listen(ENV.PORT, () => {
+      console.log(`Server running on PORT: ${ENV.PORT}`);
+    });
   } catch (error) {
     console.error("Failed to start server:", error.message);
     process.exit(1);

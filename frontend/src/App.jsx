@@ -3,8 +3,7 @@ import { NotesProvider } from "./context/NotesContext";
 import { Route, Routes } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
-import CreatePage from "./pages/CreatePage";
-import NoteDetailPage from "./pages/NoteDetailPage";
+import BoardPage from "./pages/BoardPage";
 
 const App = () => (
   <ThemeProvider>
@@ -13,8 +12,7 @@ const App = () => (
         <div className="max-w-7xl mx-auto">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/create" element={<CreatePage />} />
-            <Route path="/note/:id" element={<NoteDetailPage />} />
+            <Route path="/board/:boardId" element={<BoardPage />} />
           </Routes>
         </div>
       </div>

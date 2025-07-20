@@ -2,74 +2,77 @@ import Note from "../models/Note.js";
 
 export async function getAllNotes(req, res) {
   try {
-    const notes = await Note.find().sort({ createdAt: -1 });
-    res.status(200).json(notes);
-    return notes;
-  } catch (error) {
-    console.error("Error in getAllNotes controller", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-}
+    const { boardId } = req.query;
+    if (!boardId) throw new Error("boardId is required");
 
-export async function getNoteById(req, res) {
-  try {
-    const note = await Note.findById(req.params.id);
-    if (!note) {
-      res.status(404).json({ message: "Note not found!" });
-      return null;
-    }
-    res.json(note);
-    return note;
+    const notes = await Note.find({ boardId }).sort({ createdAt: -1 });
+    return notes; // return, don't send res here
   } catch (error) {
-    console.error("Error in getNoteById controller", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in getAllNotes", error);
+    throw error;
   }
 }
 
 export async function createNote(req, res) {
   try {
-    const { title, content } = req.body;
-    const note = new Note({ title, content });
+    const { title, content, boardId } = req.body;
+    if (!boardId) throw new Error("boardId is required");
+
+    const note = new Note({ title, content, boardId });
     const savedNote = await note.save();
-    res.status(201).json(savedNote);
-    return savedNote;
+    return savedNote; // return the created note
   } catch (error) {
-    console.error("Error in createNote controller", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in createNote", error);
+    throw error;
   }
 }
 
 export async function updateNote(req, res) {
   try {
-    const { title, content } = req.body;
-    const updatedNote = await Note.findByIdAndUpdate(
-      req.params.id,
+    const { title, content, boardId } = req.body;
+    if (!boardId) throw new Error("boardId is required");
+
+    const updatedNote = await Note.findOneAndUpdate(
+      { _id: req.params.id, boardId },
       { title, content },
       { new: true }
     );
-    if (!updatedNote) {
-      res.status(404).json({ message: "Note not found" });
-      return null;
-    }
-    res.status(200).json(updatedNote);
-    return updatedNote;
+    if (!updatedNote) throw new Error("Note not found");
+
+    return updatedNote; // return updated note
   } catch (error) {
-    console.error("Error in updateNote controller", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in updateNote", error);
+    throw error;
   }
 }
 
 export async function deleteNote(req, res) {
   try {
-    const deletedNote = await Note.findByIdAndDelete(req.params.id);
-    if (!deletedNote) {
-      res.status(404).json({ message: "Note not found" });
-      return null;
-    }
-    res.status(200).json({ message: "Note deleted successfully!", id: req.params.id });
-    return req.params.id;
+    const { boardId } = req.body;
+    if (!boardId) throw new Error("boardId is required");
+
+    const deletedNote = await Note.findOneAndDelete({ _id: req.params.id, boardId });
+    if (!deletedNote) throw new Error("Note not found");
+
+    return deletedNote._id; // return deleted note id
   } catch (error) {
-    console.error("Error in deleteNote controller", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in deleteNote", error);
+    throw error;
+  }
+}
+
+export async function getNoteById(req, res) {
+  try {
+    const { id } = req.params;
+    const { boardId } = req.query;
+    if (!boardId) throw new Error("boardId is required");
+
+    const note = await Note.findOne({ _id: id, boardId });
+    if (!note) throw new Error("Note not found");
+
+    return note;
+  } catch (error) {
+    console.error("Error in getNoteById", error);
+    throw error;
   }
 }

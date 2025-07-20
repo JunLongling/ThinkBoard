@@ -1,18 +1,10 @@
 import mongoose from "mongoose";
 
-// 1st step: Create a schema
-// 2nd step: Create a model based on that schema
-
 const noteSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: true,
-    },
-    content: {
-      type: String,
-      required: true,
-    },
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    boardId: { type: String, required: true, index: true },
   },
   { timestamps: true }
 );
