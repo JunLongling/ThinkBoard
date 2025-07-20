@@ -8,21 +8,13 @@ import { connectDB } from "./config/db.js";
 
 const app = express();
 
-const corsOptions = {
-  origin: ENV.FRONTEND_URL,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // handle preflight
-app.use(express.json()); // JSON body parser
+app.use(cors());
+app.use(express.json()); 
 
 // API routes only
 app.get("/", (req, res) => res.send("Hello from server"));
 
 app.use("/api/notes", notesRoutes);
-
 
 const startServer = async () => {
   try {
