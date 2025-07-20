@@ -5,4 +5,4 @@
 - 🛠️ Build and Test a Fully Functional REST API
 
 ## Live Demo
-[Thinkboard App](https://thinkboard-9u5a.onrender.com/)
+[Thinkboard App](https://thinkboard.pages.dev/)
