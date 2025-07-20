@@ -15,20 +15,18 @@ const HomePage = () => {
         const res = await api.get("/notes");
         console.log("API response data:", res.data);
 
-        // Defensive: ensure res.data is an array
         if (Array.isArray(res.data)) {
           setNotes(res.data);
         } else if (res.data && Array.isArray(res.data.notes)) {
-          // In case your API sends { notes: [...] }
           setNotes(res.data.notes);
         } else {
           console.warn("Unexpected notes data shape:", res.data);
-          setNotes([]); // fallback to empty array
+          setNotes([]); 
         }
       } catch (error) {
         console.error("Error fetching notes", error.response || error);
         toast.error("Failed to load notes");
-        setNotes([]); // fallback on error
+        setNotes([]); 
       } finally {
         setLoading(false);
       }
@@ -38,7 +36,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-base-100 text-base-content">
       <Navbar />
 
       <div className="max-w-7xl mx-auto p-4 mt-6">
