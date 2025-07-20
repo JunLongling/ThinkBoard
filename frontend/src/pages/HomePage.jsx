@@ -47,7 +47,7 @@ const HomePage = () => {
         {!loading && (!Array.isArray(notes) || notes.length === 0) && <NotesNotFound />}
 
         {Array.isArray(notes) && notes.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {notes.map((note) => (
               <NoteCard key={note._id} note={note} setNotes={setNotes} />
             ))}
