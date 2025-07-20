@@ -1,12 +1,50 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
 import Navbar from "../components/Navbar";
 import api from "../lib/axios";
 import toast from "react-hot-toast";
 import NoteCard from "../components/NoteCard";
 import NotesNotFound from "../components/NotesNotFound";
 
-const HomePage = () => {
+const socket = io(import.meta.env.VITE_API_BASE_URL);
+
+function useNotesSocket() {
   const [notes, setNotes] = useState([]);
+  const socketRef = useRef(socket);
+
+  useEffect(() => {
+    const socket = socketRef.current;
+
+    const handleNoteAdded = (newNote) => {
+      setNotes((prevNotes) => [newNote, ...prevNotes]);
+    };
+
+    const handleNoteUpdated = (updatedNote) => {
+      setNotes((prevNotes) =>
+        prevNotes.map((note) => (note._id === updatedNote._id ? updatedNote : note))
+      );
+    };
+
+    const handleNoteDeleted = (deletedId) => {
+      setNotes((prevNotes) => prevNotes.filter((note) => note._id !== deletedId));
+    };
+
+    socket.on("noteAdded", handleNoteAdded);
+    socket.on("noteUpdated", handleNoteUpdated);
+    socket.on("noteDeleted", handleNoteDeleted);
+
+    return () => {
+      socket.off("noteAdded", handleNoteAdded);
+      socket.off("noteUpdated", handleNoteUpdated);
+      socket.off("noteDeleted", handleNoteDeleted);
+    };
+  }, []);
+
+  return [notes, setNotes];
+}
+
+const HomePage = () => {
+  const [notes, setNotes] = useNotesSocket();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,19 +59,19 @@ const HomePage = () => {
           setNotes(res.data.notes);
         } else {
           console.warn("Unexpected notes data shape:", res.data);
-          setNotes([]); 
+          setNotes([]);
         }
       } catch (error) {
         console.error("Error fetching notes", error.response || error);
         toast.error("Failed to load notes");
-        setNotes([]); 
+        setNotes([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchNotes();
-  }, []);
+  }, [setNotes]);
 
   return (
     <div className="min-h-screen bg-base-100 text-base-content">
