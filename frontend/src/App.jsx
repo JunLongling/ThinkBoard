@@ -1,15 +1,16 @@
+import { ThemeProvider } from "./context/ThemeContext";
+import { SocketProvider } from "./context/SocketContext";
+import { NotesProvider } from "./context/NotesContext";
 import { Route, Routes } from "react-router-dom";
-import { ThemeProvider } from "./context/ThemeContext"; 
-import { SocketProvider } from "./context/SocketContext"; // import socket provider
 
 import HomePage from "./pages/HomePage";
 import CreatePage from "./pages/CreatePage";
 import NoteDetailPage from "./pages/NoteDetailPage";
 
-const App = () => {
-  return (
-    <ThemeProvider>
-      <SocketProvider>  {/* Add SocketProvider here */}
+const App = () => (
+  <ThemeProvider>
+    <SocketProvider> {/* SocketProvider comes first */}
+      <NotesProvider> {/* Then NotesProvider */}
         <div className="min-h-screen bg-base-100 text-base-content px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <Routes>
@@ -19,9 +20,9 @@ const App = () => {
             </Routes>
           </div>
         </div>
-      </SocketProvider>
-    </ThemeProvider>
-  );
-};
+      </NotesProvider>
+    </SocketProvider>
+  </ThemeProvider>
+);
 
 export default App;

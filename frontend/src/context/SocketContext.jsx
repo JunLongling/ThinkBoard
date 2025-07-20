@@ -1,30 +1,31 @@
-import React, { createContext, useContext, useEffect, useRef } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-const SocketContext = createContext();
+const SocketContext = createContext(null);
 
 export const SocketProvider = ({ children }) => {
-  const socketRef = useRef();
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    socketRef.current = io(import.meta.env.VITE_API_BASE_URL, {
+    const socketIo = io(import.meta.env.VITE_API_BASE_URL, {
+      transports: ["websocket"],
       autoConnect: true,
     });
+    setSocket(socketIo);
 
     return () => {
-      socketRef.current.disconnect();
+      socketIo.disconnect();
     };
   }, []);
 
   return (
-    <SocketContext.Provider value={socketRef.current}>
+    <SocketContext.Provider value={socket}>
       {children}
     </SocketContext.Provider>
   );
 };
 
+// IMPORTANT: Don't throw error on null socket; return null instead
 export const useSocket = () => {
-  const socket = useContext(SocketContext);
-  if (!socket) throw new Error("useSocket must be used within a SocketProvider");
-  return socket;
+  return useContext(SocketContext);
 };
