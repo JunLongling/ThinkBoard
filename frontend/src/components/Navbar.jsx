@@ -7,7 +7,7 @@ const Navbar = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
 
   return (
-    <header className="bg-base-100">
+    <header className="bg-base-100 px-4 sm:px-0">
       <div className="mx-auto max-w-6xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-primary font-mono tracking-tight">ThinkBoard</h1>
 
@@ -17,7 +17,11 @@ const Navbar = () => {
             <span className="hidden sm:inline">New Note</span>
           </Link>
 
-          <button onClick={toggleTheme} className="btn btn-outline btn-sm">
+          <button
+            onClick={toggleTheme}
+            className="btn btn-outline btn-sm p-2"
+            aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+          >
             {theme === "light" ? (
               <MoonIcon className="w-5 h-5" />
             ) : (
