@@ -1,71 +1,63 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useSocket } from "./SocketContext";
+import Pusher from "pusher-js";
 import api from "../lib/axios";
 import toast from "react-hot-toast";
 
 const NotesContext = createContext();
 
 export const NotesProvider = ({ children }) => {
-  const socket = useSocket();
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Wait for socket to be ready before fetching and subscribing
   useEffect(() => {
-    if (!socket) return;
-
     const fetchNotes = async () => {
       try {
         const res = await api.get("/notes");
         setNotes(res.data);
-      } catch (error) {
+      } catch {
         toast.error("Failed to load notes");
-        setNotes([]);
       } finally {
         setLoading(false);
       }
     };
     fetchNotes();
+  }, []);
 
-    // Socket event handlers
-    const handleNoteAdded = (newNote) => {
-      setNotes((prev) => [newNote, ...prev]);
-    };
+  useEffect(() => {
+    const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
+      cluster: import.meta.env.VITE_PUSHER_CLUSTER,
+      forceTLS: true, 
+      disableStats: true,
+      // Enable logging for debugging:
+      logToConsole: true,
+    });
 
-    const handleNoteUpdated = (updatedNote) => {
-      setNotes((prev) =>
-        prev.map((note) => (note._id === updatedNote._id ? updatedNote : note))
-      );
-    };
+    const channel = pusher.subscribe("notes-channel");
 
-    const handleNoteDeleted = (deletedId) => {
-      setNotes((prev) => prev.filter((note) => note._id !== deletedId));
-    };
+    channel.bind("note-added", (note) => {
+      setNotes((prev) => [note, ...prev]);
+    });
 
-    socket.on("noteAdded", handleNoteAdded);
-    socket.on("noteUpdated", handleNoteUpdated);
-    socket.on("noteDeleted", handleNoteDeleted);
+    channel.bind("note-updated", (note) => {
+      setNotes((prev) => prev.map((n) => (n._id === note._id ? note : n)));
+    });
 
-    // Cleanup listeners on unmount or socket change
+    channel.bind("note-deleted", ({ _id }) => {
+      setNotes((prev) => prev.filter((n) => n._id !== _id));
+    });
+
     return () => {
-      socket.off("noteAdded", handleNoteAdded);
-      socket.off("noteUpdated", handleNoteUpdated);
-      socket.off("noteDeleted", handleNoteDeleted);
+      channel.unbind_all();
+      channel.unsubscribe();
+      pusher.disconnect();
     };
-  }, [socket]);
-
-  // While socket not connected, show loading or nothing
-  if (!socket) return <div>Connecting to server...</div>;
+  }, []);
 
   return (
-    <NotesContext.Provider value={{ notes, setNotes, loading }}>
+    <NotesContext.Provider value={{ notes, loading, setNotes }}>
       {children}
     </NotesContext.Provider>
   );
 };
 
-export const useNotes = () => {
-  const context = useContext(NotesContext);
-  if (!context) throw new Error("useNotes must be used within a NotesProvider");
-  return context;
-};
+export const useNotes = () => useContext(NotesContext);

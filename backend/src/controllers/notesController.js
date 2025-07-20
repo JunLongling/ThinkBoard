@@ -1,10 +1,10 @@
 import Note from "../models/Note.js";
 
-export async function getAllNotes(_, res) {
+export async function getAllNotes(req, res) {
   try {
     const notes = await Note.find().sort({ createdAt: -1 });
     res.status(200).json(notes);
-    return notes; 
+    return notes;
   } catch (error) {
     console.error("Error in getAllNotes controller", error);
     res.status(500).json({ message: "Internal server error" });
@@ -32,7 +32,7 @@ export async function createNote(req, res) {
     const note = new Note({ title, content });
     const savedNote = await note.save();
     res.status(201).json(savedNote);
-    return savedNote; 
+    return savedNote;
   } catch (error) {
     console.error("Error in createNote controller", error);
     res.status(500).json({ message: "Internal server error" });
@@ -52,7 +52,7 @@ export async function updateNote(req, res) {
       return null;
     }
     res.status(200).json(updatedNote);
-    return updatedNote; // <-- return for emitting event
+    return updatedNote;
   } catch (error) {
     console.error("Error in updateNote controller", error);
     res.status(500).json({ message: "Internal server error" });
@@ -67,7 +67,7 @@ export async function deleteNote(req, res) {
       return null;
     }
     res.status(200).json({ message: "Note deleted successfully!", id: req.params.id });
-    return req.params.id; // <-- return id for emitting event
+    return req.params.id;
   } catch (error) {
     console.error("Error in deleteNote controller", error);
     res.status(500).json({ message: "Internal server error" });
